@@ -12,7 +12,7 @@ For instructions on how to use this lecture repo, see the [GIT document](GIT.md)
 
 | Lecture                         |   Notes    | Videos     | Solution      | Slides      |
 | ------------------------------- | :--------: | ---------- | ------------- | ----------- |
-| 1. Intro to Flask               | [Notes](https://docs.google.com/document/d/1vYLMPgKqkaIcd_wbEBkVtYwBjfGav_7KV6J6S2r52DQ/edit#heading=h.r7ivobs3wemg) | [Video](#) | [Solution](#) | [Slides](#) |
+| 1. Intro to Flask               | [Notes](https://docs.google.com/document/d/1vYLMPgKqkaIcd_wbEBkVtYwBjfGav_7KV6J6S2r52DQ/edit#heading=h.r7ivobs3wemg) | [Video](#) | [Solution](#) | [Slides](https://raw.githack.com/learn-co-students/SE-LIVE-121123-Phase-4-flask-theater-company/main/01-intro-to-flask/assets/export/index.html) |
 | 2. REST APIs with Flask - Pt 1  | [Notes](https://docs.google.com/document/d/1vYLMPgKqkaIcd_wbEBkVtYwBjfGav_7KV6J6S2r52DQ/edit#heading=h.r7ivobs3wemg) | [Video](#) | [Solution](#) | [Slides](#) |
 | 3. REST APIs with Flask - Pt 2  | [Notes](https://docs.google.com/document/d/1vYLMPgKqkaIcd_wbEBkVtYwBjfGav_7KV6J6S2r52DQ/edit#heading=h.r7ivobs3wemg) | [Video](#) | [Solution](#) | [Slides](#) |
 | 4. Client-Server Communications | [Notes](https://docs.google.com/document/d/1vYLMPgKqkaIcd_wbEBkVtYwBjfGav_7KV6J6S2r52DQ/edit#heading=h.r7ivobs3wemg) | [Video](#) | [Solution](#) | [Slides](#) |
