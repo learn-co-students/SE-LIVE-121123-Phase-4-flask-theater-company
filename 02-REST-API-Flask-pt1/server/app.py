@@ -5,18 +5,18 @@
 # Set up:
 # cd into server and run the following in the terminal
 # export FLASK_APP=app.py
-# export FLASK_RUN_PORT=5000
+# export FLASK_RUN_PORT=5555
 # flask db init
 # flask db revision --autogenerate -m'Create tables'
 # flask db upgrade
 # python seed.py
-
-from flask import Flask, jsonify, make_response, request
+import ipdb
+from flask import Flask, make_response, request
 from flask_migrate import Migrate
-from models import CastMember, Production, db
 
 # 1.✅ Import Api and Resource from flask_restful
-
+from flask_restful import Api, Resource
+from models import CastMember, Production, db
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
@@ -28,51 +28,125 @@ migrate = Migrate(app, db)
 db.init_app(app)
 
 # 2.✅ Initialize the Api
+api = Api(app)
 
 
 # 3.✅ Create a Production class that inherits from Resource
+class Productions(Resource):
+    # 4.✅ Create a GET all route
+    # 4.1 Make a get method that takes self as a param
+    def get(self):
+        # ipdb.set_trace()
+        # 4.2 Create a productions array.
+        # 4.3 Make a query for all productions. For every production in productions make a dictionary from the production with all of it's attributes. append the dictionary to the productions array.
+        # productions_list = [
+        #     {
+        #         "title": production.title,
+        #         "genre": production.genre,
+        #         "budget": production.budget,
+        #         "image": production.image,
+        #         "director": production.director,
+        #         "ongoing": production.ongoing,
+        #     }
+        #     for production in Production.query.all()
+        # ]
+        # 4.4 Create a response variable and set it to:
+        #      make_response(
+        #         jsonify(productions),
+        #         200
+        #     )
+        # 4.5 return the response
+        # return make_response(productions_list, 200)
 
-# 4.✅ Create a GET all route
-# 4.1 Make a get method that takes self as a param
-# 4.2 Create a productions array.
-# 4.3 Make a query for all productions. For every production in productions make a dictionary from the production with all of it's attributes. append the dictionary to the productions array.
-# 4.4 Create a response variable and set it to:
-#      make_response(
-#         jsonify(productions),
-#         200
-#     )
-# 4.5 return the response
-# 4.6 After building the route run the server and test it in the browser
-# 4.7 ✅ Add the new route to our api with api.add_resource
+        # 4.6 After building the route run the server and test it in the browser
+        # 4.7 ✅ Add the new route to our api with api.add_resource (see below post)
 
-# 5.✅ Serialization
-# This is great, but there's a cleaner way to do this with Serialization that will allow us to easily add our associations as well.
-# Navigate to models.py for Steps 6 - 9
+        # 5.✅ Serialization
+        # This is great, but there's a cleaner way to do this with Serialization that will allow us to easily add our associations as well.
+        # Navigate to models.py for Steps 6 - 9
 
-# 10.✅ User our serializer to format our response to be cleaner
-# 10.1 Query all of the productions, convert them to a dictionary with to_dict and set them to a list.
-# 10.2 Invoke make_response, pass it the production list and a status of 200. Set make_response to a response variable.
-# 10.3 return the response variable
-# 10.4 After building the route run the server and test it in the browser
+        # 10.✅ Use our serializer to format our response to be cleaner
+        # 10.1 Query all of the productions, convert them to a dictionary with to_dict and set them to a list.
+        productions_list = [
+            production.to_dict() for production in Production.query.all()
+        ]
+        # 10.2 Invoke make_response, pass it the production list and a status of 200. Set make_response to a response variable.
+        # 10.3 return the response variable
+        return make_response(productions_list, 200)
 
-# 11.✅ Create a POST route
-# Prepare a POST request in Postman under the Body tab select form-data and fill out the body of a production request.
-# Create the POST route
-# 📚 Review With Students: request object
-# 11.1 create a post method and pass it self.
-# 11.2 create a new production from the request.form object.
-# 11.3 add and commit the new production
-# 11.4 convert the new production to a dictionary with to_dict
-# 11.5 Set make_response to a response variable and pass it the new production and a status of 201
-# 11.6 Test the route in postman
+    # 10.4 After building the route run the server and test it in the browser
+
+    # 11.✅ Create a POST route
+    # Prepare a POST request in Postman under the Body tab select form-data and fill out the body of a production request.
+    # Create the POST route
+    # 📚 Review With Students: request object
+    # 11.1 create a post method and pass it self.
+    def post(self):
+        request_json = request.get_json()
+        # ipdb.set_trace()
+        # 11.2 create a new production from the request.json object.
+        new_production = Production(
+            title=request_json["title"],
+            genre=request_json["genre"],
+            budget=request_json["budget"],
+            image=request_json["image"],
+            director=request_json["director"],
+            description=request_json["description"],
+            ongoing=request_json["ongoing"],
+        )
+        # 11.3 add and commit the new production
+        db.session.add(new_production)
+        db.session.commit()
+
+        # 11.4 convert the new production to a dictionary with to_dict
+        # 11.5 Set make_response to a response variable and pass it the new production and a status of 201
+        return make_response(new_production.to_dict(), 201)
+
+    # 11.6 Test the route in postman
 
 
 # 12.✅ If not done above, add the new route to our api with api.add_resource
+api.add_resource(Productions, "/productions")
+
 
 # 13.✅ Create a GET one route
 # 13.1 Build a class called ProductionByID that inherits from Resource.
-# 13.2 Create a get method and pass it the id along with self. (This is how we will gain access to the id from our request)
-# 13.3 Make a query for our production by the id and build a response to send to the browser.
+class ProductionById(Resource):
+    # 13.2 Create a get method and pass it the id along with self. (This is how we will gain access to the id from our request)
+    def get(self, id):
+        # 13.3 Make a query for our production by the id and build a response to send to the browser.
+        production = Production.query.get(id)
+        if not production:
+            return make_response("Requested production not found", 404)
+        return make_response(production.to_dict(), 200)
 
 
 # 14.✅ Add the new route to our api with api.add_resource
+api.add_resource(ProductionById, "/productions/<int:id>")
+
+# The example below show the Production index and create routes WITHOUT flask_restful
+
+# @app.route("/productions", methods=["GET", "POST"])
+# def productions():
+#     if request.method == "POST":
+#         request_json = request.get_json()
+#         # ipdb.set_trace()
+#         new_production = Production(
+#             title=request_json["title"],
+#             genre=request_json["genre"],
+#             budget=request_json["budget"],
+#             image=request_json["image"],
+#             director=request_json["director"],
+#             description=request_json["description"],
+#             ongoing=request_json["ongoing"],
+#         )
+#         db.session.add(new_production)
+#         db.session.commit()
+
+#         return make_response(new_production.to_dict(), 201)
+# else:
+#    ...logic from Productions.get above to query all Productions, etc...
+
+
+if __name__ == "__main__":
+    app.run(port=5555, debug=True)
