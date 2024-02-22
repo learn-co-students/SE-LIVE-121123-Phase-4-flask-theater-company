@@ -109,5 +109,5 @@ api.add_resource(ProductionByID, "/productions/<int:id>")
 # create a POST /cast_members create route
 
 # To run the file as a script
-# if __name__ == '__main__':
-#     app.run(port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
