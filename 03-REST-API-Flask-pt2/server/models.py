@@ -39,4 +39,4 @@ class CastMember(db.Model, SerializerMixin):
     serialize_rules = ("-production.cast_members",)
 
     def __repr__(self):
-        return f"<Production Name:{self.name}, Role:{self.role}>"
+        return f"<CastMember Name:{self.name}, Role:{self.role}>"
