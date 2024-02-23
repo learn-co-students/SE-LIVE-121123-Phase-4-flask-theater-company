@@ -27,6 +27,23 @@ function ProductionFormEdit({updateProduction, production_edit}) {
     validationSchema: formSchema,
     onSubmit: (values) => {
            // 11.✅ Add a PATCH
+           fetch(`/productions/${production_edit.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+           })
+           .then(res => {
+            if (res.ok) {
+              res.json().then(production => {
+                updateProduction(production)
+                history.push(`/productions/${production.id}`)
+              })
+            } else {
+              res.json().then(errors => setError(errors.message))
+            }
+           })
           // 12. Navigate to Production Detail
         },
       })

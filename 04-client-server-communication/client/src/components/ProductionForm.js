@@ -4,6 +4,8 @@ import { useHistory } from 'react-router-dom'
 // 6.✅ Verify formik and yet have been added to our package.json dependencies 
   // import the useFormik hook from formik
   // import * as yup for yup
+  import { useFormik } from 'formik'
+  import * as yup from 'yup'
 
 
 function ProductionForm({addProduction}) {
@@ -14,7 +16,12 @@ function ProductionForm({addProduction}) {
     // title, genre, and description should have character limits.
     // Budget should be a positive number
     // Note: ongoing is set to True by default on our server.
-    
+    const formSchema = yup.object().shape({
+      title: yup.string().required("Must enter a title").max(26),
+      genre: yup.string().required(),
+      description: yup.string().max(55),
+      budget: yup.number().positive()
+    })
 
 
   // 9.✅ useFormik hook
@@ -26,6 +33,35 @@ function ProductionForm({addProduction}) {
         // 9.3.1 onSubmit is assigned an arrow function which calls our POST request to '/productions'. Pass the arrow function a param called 'values'
         // 9.3.2 In the body of the post stringify, values, null and 2
         // 9.3.3 When the POST returns add the new production to state and redirect to the page of the new Production
+        const formik = useFormik({
+          initialValues: {
+            title: '',
+            genre: '',
+            budget: '',
+            image: '',
+            director: '',
+            description: '', 
+          },
+          validationSchema: formSchema,
+          onSubmit: (values) => {
+            fetch('/productions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(values),
+
+            })
+            .then(res => {
+              if (res.ok) {
+                res.json().then(production => {
+                  addProduction(production)
+                  history.push(`/productions/${production.id}`)
+                })
+              }
+            })
+          }
+        })
  
    // 9.✅ use formik to handle the Submit and Change events
 
@@ -34,25 +70,25 @@ function ProductionForm({addProduction}) {
 
     return (
       <div className='App'>
-
-      <Form >
+      {Object.values(formik.errors).map(error => <h2 style={{color:'red'}}>{error}</h2>)}
+      <Form onSubmit={formik.handleSubmit}>
         <label>Title </label>
-        <input type='text' name='title'  />
+        <input type='text' name='title' value={formik.values.title} onChange={formik.handleChange} />
         
         <label> Genre</label>
-        <input type='text' name='genre'  />
+        <input type='text' name='genre' value={formik.values.genre} onChange={formik.handleChange} />
       
         <label>Budget</label>
-        <input type='number' name='budget'  />
+        <input type='number' name='budget' value={formik.values.budget} onChange={formik.handleChange} />
       
         <label>Image</label>
-        <input type='text' name='image'  />
+        <input type='text' name='image' value={formik.values.image} onChange={formik.handleChange} />
       
         <label>Director</label>
-        <input type='text' name='director'  />
+        <input type='text' name='director' value={formik.values.director} onChange={formik.handleChange} />
       
         <label>Description</label>
-        <textarea type='text' rows='4' cols='50' name='description'  />
+        <textarea type='text' rows='4' cols='50' name='description' value={formik.values.description} onChange={formik.handleChange} />
       
         <input type='submit' />
       </Form> 

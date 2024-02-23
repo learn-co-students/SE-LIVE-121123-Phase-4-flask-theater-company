@@ -2,7 +2,7 @@ import  {useParams, useHistory } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 
-function ProductionDetail() {
+function ProductionDetail({handleEdit, deleteProduction}) {
   const [production, setProduction] = useState({cast_members:[]})
   const [error, setError] = useState(null)
   
@@ -20,7 +20,15 @@ function ProductionDetail() {
   },[])
 
   //12.✅ Create a Delete Button and add a fetch request that will delete a production 
-
+function handleDelete(production){
+  fetch(`/productions/${production.id}`, {
+    method: 'DELETE'
+  })
+  .then(() => {
+    deleteProduction(production)
+    history.push('/')
+  })
+}
   
   const {id, title, genre, image,description, cast_members} = production 
   if(error) return <h2>{error}</h2>
@@ -40,7 +48,8 @@ function ProductionDetail() {
             </div>
             <img src={image}/>
           </div>
-      <button >Buy Ticket</button>
+      <button onClick={()=>handleEdit(production)}>Edit Production</button>
+      <button onClick={()=>handleDelete(production)}>Delete Production</button>
       </CardDetail>
     )
   }

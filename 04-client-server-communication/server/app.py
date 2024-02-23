@@ -22,6 +22,8 @@
 from flask import Flask, abort, make_response, request
 
 # 5.✅ Import CORS from flask_cors, invoke it and pass it app
+from flask_cors import CORS
+
 #   5.1 Start up the server / client and navigate to client/src/App.js
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -29,6 +31,7 @@ from models import Actor, CastMember, Production, db
 from werkzeug.exceptions import NotFound
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
@@ -54,14 +57,19 @@ class Productions(Resource):
     def post(self):
         form_json = request.get_json()
         # 4.✅ Add a try except, try to create a new production. If a ValueError is raised call abort with a 422 and pass it the validation errors.
-        new_production = Production(
-            title=form_json["title"],
-            genre=form_json["genre"],
-            budget=int(form_json["budget"]),
-            image=form_json["image"],
-            director=form_json["director"],
-            description=form_json["description"],
-        )
+        try:
+            new_production = Production(
+                title=form_json["title"],
+                genre=form_json["genre"],
+                budget=int(form_json["budget"]),
+                image=form_json["image"],
+                director=form_json["director"],
+                description=form_json["description"],
+            )
+        except ValueError as e:
+            abort(422, e.args[0])
+        except Exception as e:
+            abort(422, e.args[0])
 
         db.session.add(new_production)
         db.session.commit()
@@ -90,11 +98,11 @@ class ProductionByID(Resource):
         if not production:
             raise NotFound
 
-        for attr in request.form:
-            setattr(production, attr, request.form[attr])
+        for attr in request.get_json():
+            setattr(production, attr, request.get_json()[attr])
 
-        production.ongoing = bool(request.form["ongoing"])
-        production.budget = int(request.form["budget"])
+        # production.ongoing = bool(request.form["ongoing"])
+        # production.budget = int(request.form["budget"])
 
         db.session.add(production)
         db.session.commit()

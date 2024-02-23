@@ -1,13 +1,14 @@
 // 📚 Review With Students:
     // Request response cycle
     //Note: This was build using v5 of react-router-dom
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, useHistory } from 'react-router-dom'
 import {createGlobalStyle} from 'styled-components'
 import {useEffect, useState} from 'react'
 import Home from './components/Home'
 import ProductionForm from './components/ProductionForm'
 import Navigation from './components/Navigation'
 import ProductionDetail from './components/ProductionDetail'
+import ProductionEdit from './components/ProductionEdit'
 import NotFound from './components/NotFound'
 
 function App() {
@@ -20,6 +21,12 @@ function App() {
   // 5.2 Build a fetch request to '/productions'
     // Note: The proxy in package.json has been set to "http://localhost:5000"
     // This will allow us to proxy our api requests  
+    useEffect(() => {
+      fetch('/productions')
+        .then(res => res.json())
+        .then(setProductions)
+    }, [])
+    
   // 5.3 When productions return set the productions to state
   // 6.✅ navigate to client/src/components/ProductionForm.js
 
