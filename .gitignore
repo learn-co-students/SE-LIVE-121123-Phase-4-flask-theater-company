@@ -1,4 +1,0 @@
-*/.venv
-*.db
-*/*/migrations
-*/*/instance
