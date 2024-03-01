@@ -178,6 +178,16 @@ def login():
 # 4.2.2 Use the user id to query the user with a .filter
 # 4.2.3 If the user id is in sessions and found make a response to send to the client. else raise the Unauthorized exception (Note- Unauthorized is being imported from werkzeug.exceptions)
 
+
+@app.route("/authorized")
+def authorized():
+    user = User.query.filter_by(id=session.get("user_id")).first()
+    if not user:
+        raise Unauthorized
+        # abort(401, "User is unauthorized")
+    return make_response(user.to_dict(), 200)
+
+
 # 5.✅ Head back to client/src/App.js to restrict access to our app!
 
 # 6.✅ Logout
@@ -211,7 +221,18 @@ def dark_mode():
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     response = make_response(
-        "Not Found: Sorry the resource you are looking for does not exist", 404
+        {"error": "Not Found: Sorry the resource you are looking for does not exist"},
+        404,
+    )
+
+    return response
+
+
+@app.errorhandler(Unauthorized)
+def handle_unauthorized(e):
+    response = make_response(
+        {"error": "Unauthorized: you must be logged in to make that request."},
+        401,
     )
 
     return response

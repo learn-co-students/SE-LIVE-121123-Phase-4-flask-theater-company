@@ -19,7 +19,7 @@ function App() {
   const history = useHistory()
 
   useEffect(() => {
-   
+    fetchUser()
     fetchProductions()
   },[])
 
@@ -33,8 +33,16 @@ function App() {
     // 8.✅ Create a GET fetch that goes to '/authorized'
       // If returned successfully set the user to state and fetch our productions
       // else set the user in state to Null
-   
-}
+      fetch('/authorized')
+        .then(res => {
+          if (res.ok){
+            res.json()
+             .then(setUser)
+          } else {
+            setUser(null)
+          }
+        })     
+    }
  
   const addProduction = (production) => setProductions(current => [...current,production])
   const updateProduction = (updated_production) => setProductions(productions => productions.map(production => production.id == updated_production.id? updated_production : production))
@@ -49,6 +57,14 @@ function App() {
     // If the user is not in state return JSX and include <GlobalStyle /> <Navigation/> and  <Authentication updateUser={updateUser}/>
     //9.1 Test out our route! Logout and try to visit other pages. Login and try to visit other pages again. Refresh the page and note that you are still logged in! 
   
+  if (!user) return (
+    <>
+      <GlobalStyle />
+      <Navigation />
+      <Authentication updateUser={updateUser} />
+    </>
+  )
+
   return (
     <>
     <GlobalStyle />
