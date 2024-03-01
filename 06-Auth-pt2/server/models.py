@@ -15,7 +15,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 # 3.✅ Import bcyrpt from app
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={"echo": True})
+
 class Production(db.Model, SerializerMixin):
     __tablename__ = 'productions'
     

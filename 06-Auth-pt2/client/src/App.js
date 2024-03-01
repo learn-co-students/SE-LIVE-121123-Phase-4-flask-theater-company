@@ -41,6 +41,7 @@ function App() {
   const addProduction = (production) => setProductions(current => [...current,production])
   
   const updateUser = (user) => setUser(user)
+  
   if(!user) return (
     <>
       <GlobalStyle />
