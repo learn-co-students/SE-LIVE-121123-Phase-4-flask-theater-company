@@ -16,6 +16,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
 
+# generate a secrete key `python -c 'import os; print(os.urandom(16))'`
 app.secret_key = os.environ.get("SECRET_KEY")
 
 db = SQLAlchemy()
