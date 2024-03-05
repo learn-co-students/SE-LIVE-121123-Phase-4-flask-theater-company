@@ -8,7 +8,7 @@ function ProductionContainer({productions}) {
      <div>
          <Title><span>F</span>latIron Theater <span>C</span>ompany</Title>
          <CardContainer>
-             {productions.map(production => <ProductionCard  key={production.id} production={production}  />)}
+             {productions && productions.map(production => <ProductionCard  key={production.id} production={production}  />)}
          </CardContainer>
      </div>
     )

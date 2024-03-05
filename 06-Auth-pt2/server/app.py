@@ -12,38 +12,27 @@
 # In Terminal, run:
 # `honcho start -f Procfile.dev`
 
+from config import api, app
 from flask import Flask, abort, jsonify, make_response, request, session
-from flask_bcrypt import Bcrypt
-from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_restful import Api, Resource
+from flask_restful import Resource
+from models import CastMember, Production, User, db
 from werkzeug.exceptions import NotFound, Unauthorized
 
 # 0.0 Move Flask app and SQLAlchemy initialization and configuration to config.py
 # 0.1 Update imports as necessary
 
 
-
-
 # 2.✅ Navigate to "models.py"
 # Continue on Step 3
 
-app = Flask(__name__)
-CORS(app)
-from models import CastMember, Production, User, db
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.json.compact = False
+# the following adds route-specific authoriztion
+@app.before_request
+def check_if_logged_in():
+    open_access_list = ["signup", "login", "logout", "authorized"]
 
-app.secret_key = b"@~xH\xf2\x10k\x07hp\x85\xa6N\xde\xd4\xcd"
-
-
-migrate = Migrate(app, db)
-db.init_app(app)
-
-Api.error_router = lambda self, handler, e: handler(e)
-api = Api(app)
+    if request.endpoint not in open_access_list and not session.get("user_id"):
+        raise Unauthorized
 
 
 class Productions(Resource):
@@ -134,7 +123,11 @@ class Users(Resource):
     def post(self):
         req_json = request.get_json()
         try:
-            new_user = User(**req_json)
+            new_user = User(
+                name=req_json["name"],
+                email=req_json["email"],
+                password_hash=req_json["password"],
+            )
         except:
             abort(422, "Some values failed validation")
         db.session.add(new_user)
@@ -154,10 +147,11 @@ api.add_resource(Users, "/users", "/signup")
 @app.route("/login", methods=["POST"])
 def login():
     user = User.query.filter_by(name=request.get_json()["name"]).first()
-    if not user:
-        raise NotFound
-    session["user_id"] = user.id  # "logs in" the user
-    return make_response(user.to_dict(), 200)
+    if user and user.authenticate(request.get_json()["password"]):
+        session["user_id"] = user.id  # "logs in" the user
+        return make_response(user.to_dict(), 200)
+    else:
+        raise Unauthorized
 
 
 # 12 Head to client/components/authenticate
@@ -181,6 +175,11 @@ def authorized():
 # 14.2.1 Set the user_id in sessions to None
 # 14.2.1 Create a response with no content and a 204
 # 14.3 Test out your route with the client or Postman
+@app.route("/logout", methods=["DELETE"])
+def logout():
+    # session["user_id"] = None
+    session.clear()
+    return make_response({}, 204)
 
 
 # 14.✅ Navigate to client navigation
@@ -189,7 +188,8 @@ def authorized():
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     response = make_response(
-        "Not Found: Sorry the resource you are looking for does not exist", 404
+        {"message": "Not Found: Sorry the resource you are looking for does not exist"},
+        404,
     )
 
     return response
@@ -198,7 +198,7 @@ def handle_not_found(e):
 @app.errorhandler(Unauthorized)
 def handle_unauthorized(e):
     response = make_response(
-        {"error": "Unauthorized: you must be logged in to make that request."},
+        {"message": "Unauthorized: you must be logged in to make that request."},
         401,
     )
 
@@ -206,4 +206,4 @@ def handle_unauthorized(e):
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=5555, debug=True)
