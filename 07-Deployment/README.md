@@ -37,8 +37,8 @@
 ### Configure Application 
   3. ✅ If missing, add any of the following libraries to the pipfile `python-dotenv` `gunicorn` `psycopg2-binary` `flask-SQLAlchemy` `flask-migrate` `SQLAlchemy-Serializer` and `flask-RESTful` 
   * 3.1 Create a requirements.txt with `pipenv requirements > requirements.txt`
-  * 3.2 Create a .evn file 
-  * 3.3 In app add `import os` and `from dotenv import load_dotenv` set app.config['SQLALCHEMY_DATABASE_URI'] os.environ.get('DATABASE_URI') 
+  * 3.2 Create a .env file 
+  * 3.3 In config.py add `import os` and `from dotenv import load_dotenv` set app.config['SQLALCHEMY_DATABASE_URI'] os.environ.get('DATABASE_URI') 
 
 ### Render PostgreSQL
   4. ✅ Create an account on Render 

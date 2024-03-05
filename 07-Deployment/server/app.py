@@ -12,7 +12,7 @@
 # In Terminal, run:
 # `honcho start -f Procfile.dev`
 
-from config import api, app, db
+from config import api, app
 from flask import Flask, abort, jsonify, make_response, request, session
 
 # from flask_cors import CORS
