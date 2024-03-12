@@ -15,14 +15,22 @@ function App() {
 
   useEffect(() => {
     fetchUser()
-    fetchProductions()
+    
   },[])
 
-  const fetchProductions = () => (
+  useEffect(() => {
+    fetchProductions()
+  }, [user])
+
+  const fetchProductions = () => {
     fetch('/productions')
-    .then(res => res.json())
-    .then(setProductions)
-  )
+    .then(res => {
+      if (res.ok){
+        res.json()
+        .then(setProductions)
+      }}
+    )}
+
 
   const fetchUser = () => (
     fetch('/authorized')
