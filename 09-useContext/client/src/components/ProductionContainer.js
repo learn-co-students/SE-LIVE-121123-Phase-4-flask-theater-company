@@ -1,9 +1,11 @@
 import styled from 'styled-components'
 import ProductionCard from './ProductionCard'
+import { useProduction } from '../context/production'
 
 
-function ProductionContainer({productions}) {
+function ProductionContainer() {
 
+const {productions} = useProduction()
     return (
      <div>
          <Title><span>F</span>latIron Theater <span>C</span>ompany</Title>
